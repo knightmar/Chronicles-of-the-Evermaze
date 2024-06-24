@@ -11,6 +11,7 @@ public class player : MonoBehaviour
 
     [SerializeField]
     float speed;
+
     [SerializeField]
     float jumpForce;
 
@@ -40,13 +41,22 @@ public class player : MonoBehaviour
         float x = Input.GetAxis("Vertical");
         float y = -Input.GetAxis("Horizontal");
         Vector3 movement = new Vector3(x, 0, y) * speed;
-        rigid.velocity = transform.TransformDirection(movement);
+        Vector3 currentVelocity = rigid.velocity;
 
-        if (Input.GetKeyDown(KeyCode.Space) && Mathf.Abs(rigid.velocity.y) < 0.01)
+        movement = transform.TransformDirection(movement);
+        movement.y = currentVelocity.y;
+
+        rigid.velocity = movement;
+
+        if (Physics.Raycast(transform.position, Vector3.down, 1.1f))
         {
-            rigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                rigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
         }
     }
+
 
     void UpdateCam()
     {
